@@ -14,6 +14,10 @@
 		}
 		return replacementTable[character] || character;
 	}
+    
+    function isHebrewLetter(letter) {
+      
+    }
 
     var processHebrew = jsPDFAPI.processHebrew = function (text, reverse) {
       		var replacementTable = {
@@ -34,7 +38,7 @@
         var currentstr = ""
         for (var i = 0; i < words.length; i += 1) {
             var currentWord = words[i];
-            if (/^[a-zA-Z]+$/.test(currentWord)) {
+            if (currentWord.match(/[a-zA-Z]/)) {
                 if (currentstr.length > 1) {
                   result = result + " " + currentstr.split("").reverse().join("");
                   currentstr = "";
