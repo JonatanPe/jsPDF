@@ -27,6 +27,28 @@
             var currentLetter = text[i];
             result += replacementTable[currentLetter] ? replacementTable[currentLetter] : currentLetter;
         }
+      
+        var words = text.split(" ");
+      
+        result = "";
+        var currentstr = ""
+        for (var i = 0; i < words.length; i += 1) {
+            var currentWord = words[i];
+            if (/^[a-zA-Z]+$/.test(currentWord)) {
+                if (currentstr.length > 1) {
+                  result = result + " " + currentstr.split("").reverse().join("");
+                  currentstr = "";
+                }
+              result = result + " " + currentWord;
+            } else {
+              currentstr = currentstr + " " + currentWord;
+            }
+        }
+      
+        if (currentstr.length > 1) {
+          result = result + " " + currentstr.split("").reverse().join("");
+        }
+      
         return result;
     }
 

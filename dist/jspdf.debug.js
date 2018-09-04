@@ -12,8 +12,8 @@
 
   /** @preserve
    * jsPDF - PDF Document creation from JavaScript
-   * Version 1.4.1 Built on 2018-09-04T11:19:43.670Z
-   *                           CommitID 20cd3cc966
+   * Version 1.4.1 Built on 2018-09-04T14:21:05.369Z
+   *                           CommitID d391c67fed
    *
    * Copyright (c) 2010-2016 James Hall <james@parall.ax>, https://github.com/MrRio/jsPDF
    *               2010 Aaron Spike, https://github.com/acspike
@@ -24483,6 +24483,28 @@
               var currentLetter = text[i];
               result += replacementTable[currentLetter] ? replacementTable[currentLetter] : currentLetter;
           }
+
+          var words = text.split(" ");
+
+          result = "";
+          var currentstr = "";
+          for (var i = 0; i < words.length; i += 1) {
+              var currentWord = words[i];
+              if (/^[a-zA-Z]+$/.test(currentWord)) {
+                  if (currentstr.length > 1) {
+                      result = result + " " + currentstr.split("").reverse().join("");
+                      currentstr = "";
+                  }
+                  result = result + " " + currentWord;
+              } else {
+                  currentstr = currentstr + " " + currentWord;
+              }
+          }
+
+          if (currentstr.length > 1) {
+              result = result + " " + currentstr.split("").reverse().join("");
+          }
+
           return result;
       };
 
