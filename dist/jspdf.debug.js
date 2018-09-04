@@ -12,8 +12,8 @@
 
   /** @preserve
    * jsPDF - PDF Document creation from JavaScript
-   * Version 1.4.1 Built on 2018-08-30T13:03:12.631Z
-   *                           CommitID 02f42b9920
+   * Version 1.4.1 Built on 2018-09-04T11:19:43.670Z
+   *                           CommitID 20cd3cc966
    *
    * Copyright (c) 2010-2016 James Hall <james@parall.ax>, https://github.com/MrRio/jsPDF
    *               2010 Aaron Spike, https://github.com/acspike
@@ -10077,11 +10077,16 @@
       var activeFont = options.font || this.internal.getFont();
       var fontSize = options.fontSize || this.internal.getFontSize();
       var charSpace = options.charSpace || this.internal.getCharSpace();
-
-      var widths = options.widths ? options.widths : activeFont.metadata.Unicode.widths;
-      var widthsFractionOf = widths.fof ? widths.fof : 1;
-      var kerning = options.kerning ? options.kerning : activeFont.metadata.Unicode.kerning;
-      var kerningFractionOf = kerning.fof ? kerning.fof : 1;
+      try {
+        var widths = options.widths ? options.widths : activeFont.metadata.Unicode.widths;
+        var widthsFractionOf = widths.fof ? widths.fof : 1;
+        var kerning = options.kerning ? options.kerning : activeFont.metadata.Unicode.kerning;
+        var kerningFractionOf = kerning.fof ? kerning.fof : 1;
+      } catch (e) {
+        activeFont.metadata = { Unicode: { widths: {}, kerning: {} } };
+        widthsFractionOf = 1;
+        kerningFractionOf = 1;
+      }
 
       var i;
       var l;

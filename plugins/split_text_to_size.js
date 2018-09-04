@@ -43,12 +43,17 @@
     var activeFont = options.font || this.internal.getFont();
     var fontSize = options.fontSize || this.internal.getFontSize();
     var charSpace = options.charSpace || this.internal.getCharSpace();
-    
+    try {
     var widths = options.widths ? options.widths : activeFont.metadata.Unicode.widths;
     var widthsFractionOf = widths.fof ? widths.fof : 1;
     var kerning = options.kerning ? options.kerning : activeFont.metadata.Unicode.kerning;
     var kerningFractionOf = kerning.fof ? kerning.fof : 1;
-  
+    } catch (e) {
+      activeFont.metadata = {Unicode: {widths: {}, kerning: {}}};
+      widthsFractionOf = 1;
+      kerningFractionOf = 1;
+    }
+    
     var i;
     var l;
     var char_code;
