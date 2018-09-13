@@ -12,8 +12,8 @@
 
   /** @preserve
    * jsPDF - PDF Document creation from JavaScript
-   * Version 1.4.1 Built on 2018-09-04T14:31:51.970Z
-   *                           CommitID 26597ec21d
+   * Version 1.4.1 Built on 2018-09-13T10:44:51.354Z
+   *                           CommitID c8230097cf
    *
    * Copyright (c) 2010-2016 James Hall <james@parall.ax>, https://github.com/MrRio/jsPDF
    *               2010 Aaron Spike, https://github.com/acspike
@@ -2610,10 +2610,6 @@
     }
     return jsPDF;
   }(typeof self !== "undefined" && self || typeof window !== "undefined" && window || typeof global !== "undefined" && global || Function('return typeof this === "object" && this.content')() || Function('return this')());
-  // `self` is undefined in Firefox for Android content script context
-  // while `this` is nsIContentFrameMessageManager
-  // with an attribute `content` that corresponds to the window
-  
 
   /**
    * jsPDF AcroForm Plugin Copyright (c) 2016 Alexander Weidt,
@@ -6247,7 +6243,7 @@
        * @param {Integer} [y] top-position for top-left corner of table
        * @param {Object[]} [data] As array of objects containing key-value pairs corresponding to a row of data.
        * @param {String[]} [headers] Omit or null to auto-generate headers at a performance cost
-        * @param {Object} [config.printHeaders] True to print column headers at the top of every page
+         * @param {Object} [config.printHeaders] True to print column headers at the top of every page
        * @param {Object} [config.autoSize] True to dynamically set the column widths to match the widest cell value
        * @param {Object} [config.margins] margin values for left, top, bottom, and width
        * @param {Object} [config.fontSize] Integer fontSize to use (optional)
@@ -9273,13 +9269,18 @@
     *
     Color    Allowed      Interpretation
     Type     Bit Depths
-   	   0       1,2,4,8,16  Each pixel is a grayscale sample.
-   	   2       8,16        Each pixel is an R,G,B triple.
-   	   3       1,2,4,8     Each pixel is a palette index;
+   
+      0       1,2,4,8,16  Each pixel is a grayscale sample.
+   
+      2       8,16        Each pixel is an R,G,B triple.
+   
+      3       1,2,4,8     Each pixel is a palette index;
                           a PLTE chunk must appear.
-   	   4       8,16        Each pixel is a grayscale sample,
+   
+      4       8,16        Each pixel is a grayscale sample,
                           followed by an alpha sample.
-   	   6       8,16        Each pixel is an R,G,B triple,
+   
+      6       8,16        Each pixel is an R,G,B triple,
                           followed by an alpha sample.
    */
 
@@ -9587,7 +9588,8 @@
   		    smask;
 
   		/*	if(this.isString(imageData)) {
-    		}*/
+    
+    	}*/
 
   		if (this.isArrayBuffer(imageData)) imageData = new Uint8Array(imageData);
 
@@ -10129,11 +10131,11 @@
     };
     /**
     Returns a widths of string in a given font, if the font size is set as 1 point.
-     In other words, this is "proportional" value. For 1 unit of font size, the length
+      In other words, this is "proportional" value. For 1 unit of font size, the length
     of the string will be that much.
-     Multiply by font size to get actual width in *points*
+      Multiply by font size to get actual width in *points*
     Then divide by 72 to get inches or divide by (72/25.6) to get 'mm' etc.
-     @public
+      @public
     @function
     @param
     @returns {Type}
@@ -10295,9 +10297,9 @@
     (in measurement units declared as default for the jsPDF instance)
     and the font's "widths" and "Kerning" tables, where available, to
     determine display length of a given string for a given font.
-     We use character's 100% of unit size (height) as width when Width
+      We use character's 100% of unit size (height) as width when Width
     table or other default width is not available.
-     @public
+      @public
     @function
     @param text {String} Unencoded, regular JavaScript (Unicode, UTF-16 / UCS-2) string.
     @param size {Number} Nominal number, measured in units default to this instance of jsPDF.
@@ -12640,7 +12642,6 @@
   }
 
   try { exports.GifWriter = GifWriter; exports.GifReader = GifReader; } catch(e) { }  // CommonJS.
-  
 
   /*
     Copyright (c) 2008, Adobe Systems Incorporated
@@ -13653,7 +13654,6 @@
   		  };
   		};
   } catch(e) { }  // CommonJS.
-  
 
   /*
    Copyright (c) 2013 Gildas Lormeau. All rights reserved.
@@ -21263,7 +21263,7 @@
       var APNG_BLEND_OP_SOURCE, APNG_DISPOSE_OP_BACKGROUND, APNG_DISPOSE_OP_PREVIOUS, makeImage, scratchCanvas, scratchCtx;
 
       PNG.load = function(url, canvas, callback) {
-        var xhr;
+        var xhr;
         if (typeof canvas === 'function') {
           callback = canvas;
         }
@@ -24471,41 +24471,51 @@
 
       var heLangCodesKeys = Object.keys(heLangCodes);
 
-      var processHebrew = jsPDFAPI.processHebrew = function (text, reverse) {
+      jsPDFAPI.processHebrew = function (text, reverse) {
           var replacementTable = {
               '(': ')',
               ')': '('
           };
 
-          var result = "";
+          var getHebrewWord = function getHebrewWord(text) {
+              var resultWord = '';
+              for (var i = 0; i < text.trim().length; i += 1) {
+                  var currentLetter = text[i];
+                  resultWord += replacementTable[currentLetter] ? replacementTable[currentLetter] : currentLetter;
+              }
+              return resultWord.split('').reverse().join('');
+          };
 
-          for (var i = 0; i < text.length; i += 1) {
-              var currentLetter = text[i];
-              result += replacementTable[currentLetter] ? replacementTable[currentLetter] : currentLetter;
-          }
+          var isHebrewWord = function isHebrewWord(word) {
+              for (var i = 0; i < word.length; i += 1) {
+                  if (word.charCodeAt(i) >= 0x590 && word.charCodeAt(i) <= 0x5FF) {
+                      return true;
+                  }
+              }
 
-          var words = text.split(" ");
+              return false;
+          };
 
-          result = "";
-          var currentstr = "";
+          var words = text.trim().split(' ');
+
+          var result = [];
+          var hebrewPart = [];
           for (var i = 0; i < words.length; i += 1) {
               var currentWord = words[i];
-              if (currentWord.match(/[a-zA-Z]/)) {
-                  if (currentstr.length > 1) {
-                      result = result + " " + currentstr.split("").reverse().join("");
-                      currentstr = "";
-                  }
-                  result = result + " " + currentWord;
+              if (isHebrewWord(currentWord)) {
+                  hebrewPart.push(getHebrewWord(currentWord));
               } else {
-                  currentstr = currentstr + " " + currentWord;
+                  result.push(hebrewPart.reverse().join(' '));
+                  hebrewPart = [];
+                  result.push(currentWord);
               }
           }
 
-          if (currentstr.length > 1) {
-              result = result + " " + currentstr.split("").reverse().join("");
+          if (hebrewPart.length > 0) {
+              result.push(hebrewPart.reverse().join(' '));
           }
 
-          return result;
+          return result.join(' ');
       };
 
       var hebrewParserFunction = function hebrewParserFunction(args) {
@@ -24520,14 +24530,14 @@
                   tmpText = [];
                   for (i = 0; i < text.length; i += 1) {
                       if (Object.prototype.toString.call(text[i]) === '[object Array]') {
-                          tmpText.push([processHebrew(text[i][0], true), text[i][1], text[i][2]]);
+                          tmpText.push([jsPDFAPI.processHebrew(text[i][0], true), text[i][1], text[i][2]]);
                       } else {
-                          tmpText.push([processHebrew(text[i], true)]);
+                          tmpText.push([jsPDFAPI.processHebrew(text[i], true)]);
                       }
                   }
                   args.text = tmpText;
               } else {
-                  args.text = processHebrew(text, true);
+                  args.text = jsPDFAPI.processHebrew(text, true);
               }
           }
       };
