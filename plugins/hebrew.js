@@ -6,55 +6,53 @@
     };
   
     var heLangCodesKeys = Object.keys(heLangCodes);
-  
-	var commonSubstition = function (character) {
-		var replacementTable = {
-			'(': ')',
-			')': '('
-		}
-		return replacementTable[character] || character;
-	}
-    
-    function isHebrewLetter(letter) {
-      
-    }
 
-    var processHebrew = jsPDFAPI.processHebrew = function (text, reverse) {
-      		var replacementTable = {
-			'(': ')',
-			')': '('
-		}
-            
-        var result = "";    
+    jsPDFAPI.processHebrew = function (text, reverse) {
+      const replacementTable = {
+        '(': ')',
+        ')': '(',
+      };
 
-        for (var i = 0; i < text.length; i += 1) {
-            var currentLetter = text[i];
-            result += replacementTable[currentLetter] ? replacementTable[currentLetter] : currentLetter;
+      const getHebrewWord = function getHebrewWord(text) {
+        let resultWord = '';
+        for (let i = 0; i < text.trim().length; i += 1) {
+          const currentLetter = text[i];
+          resultWord += replacementTable[currentLetter] ? replacementTable[currentLetter] : currentLetter;
         }
-      
-        var words = text.split(" ");
-      
-        result = "";
-        var currentstr = ""
-        for (var i = 0; i < words.length; i += 1) {
-            var currentWord = words[i];
-            if (currentWord.match(/[a-zA-Z]/)) {
-                if (currentstr.length > 1) {
-                  result = result + " " + currentstr.split("").reverse().join("");
-                  currentstr = "";
-                }
-              result = result + " " + currentWord;
-            } else {
-              currentstr = currentstr + " " + currentWord;
-            }
+        return resultWord.split('').reverse().join('');
+      };
+
+      const isHebrewWord = function isHebrewWord(word) {
+        for (let i = 0; i < word.length; i += 1) {
+          if (word.charCodeAt(i) >= 0x590 && word.charCodeAt(i) <= 0x5FF) {
+            return true;
+          }
         }
-      
-        if (currentstr.length > 1) {
-          result = result + " " + currentstr.split("").reverse().join("");
+
+        return false;
+      };
+
+      const words = text.trim().split(' ');
+
+      const result = [];
+      let hebrewPart = [];
+      for (let i = 0; i < words.length; i += 1) {
+        const currentWord = words[i];
+        if (isHebrewWord(currentWord)) {
+          hebrewPart.push(getHebrewWord(currentWord));
+        } else {
+          result.push(hebrewPart.reverse().join(' '));
+          hebrewPart = [];
+          result.push(currentWord);
         }
-      
-        return result;
-    }
+      }
+
+      if (hebrewPart.length > 0) {
+        result.push(hebrewPart.reverse().join(' '));
+      }
+
+      return result.join(' ');
+    };
 
     var hebrewParserFunction = function (args) {
         var text = args.text;
@@ -68,14 +66,14 @@
                 tmpText = [];
                 for (i = 0; i < text.length; i += 1) {
                     if (Object.prototype.toString.call(text[i]) === '[object Array]') {
-                        tmpText.push([processHebrew(text[i][0], true), text[i][1], text[i][2]]);
+                        tmpText.push([jsPDFAPI.processHebrew(text[i][0], true), text[i][1], text[i][2]]);
                     } else {
-                        tmpText.push([processHebrew(text[i], true)]);
+                        tmpText.push([jsPDFAPI.processHebrew(text[i], true)]);
                     }
                 }
                 args.text = tmpText;
             } else {
-                args.text = processHebrew(text, true);
+                args.text = jsPDFAPI.processHebrew(text, true);
             }
         }
     };
