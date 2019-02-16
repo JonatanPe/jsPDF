@@ -8,6 +8,8 @@
     var heLangCodesKeys = Object.keys(heLangCodes);
 
     jsPDFAPI.processHebrew = function (text, reverse) {
+      if(!reverse) return text;
+      
       const replacementTable = {
         '(': ')',
         ')': '(',
@@ -58,6 +60,7 @@
         var text = args.text;
         var options = args.options || {};
         var lang = options.lang;
+        var reverse = options.reverse === undefined ? true : options.reverse;
         var tmpText = [];
 
         if (heLangCodesKeys.indexOf(lang) >= 0) {
@@ -66,14 +69,14 @@
                 tmpText = [];
                 for (i = 0; i < text.length; i += 1) {
                     if (Object.prototype.toString.call(text[i]) === '[object Array]') {
-                        tmpText.push([jsPDFAPI.processHebrew(text[i][0], true), text[i][1], text[i][2]]);
+                        tmpText.push([jsPDFAPI.processHebrew(text[i][0], reverse), text[i][1], text[i][2]]);
                     } else {
-                        tmpText.push([jsPDFAPI.processHebrew(text[i], true)]);
+                        tmpText.push([jsPDFAPI.processHebrew(text[i], reverse)]);
                     }
                 }
                 args.text = tmpText;
             } else {
-                args.text = jsPDFAPI.processHebrew(text, true);
+                args.text = jsPDFAPI.processHebrew(text, reverse);
             }
         }
     };
