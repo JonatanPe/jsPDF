@@ -12,8 +12,8 @@
 
   /** @preserve
    * jsPDF - PDF Document creation from JavaScript
-   * Version 1.4.1 Built on 2018-09-13T10:44:51.354Z
-   *                           CommitID c8230097cf
+   * Version 1.4.1 Built on 2019-02-16T09:15:22.622Z
+   *                           CommitID c2d46f0d3b
    *
    * Copyright (c) 2010-2016 James Hall <james@parall.ax>, https://github.com/MrRio/jsPDF
    *               2010 Aaron Spike, https://github.com/acspike
@@ -24472,6 +24472,8 @@
       var heLangCodesKeys = Object.keys(heLangCodes);
 
       jsPDFAPI.processHebrew = function (text, reverse) {
+          if (!reverse) return text;
+
           var replacementTable = {
               '(': ')',
               ')': '('
@@ -24522,6 +24524,7 @@
           var text = args.text;
           var options = args.options || {};
           var lang = options.lang;
+          var reverse = options.reverse === undefined ? true : options.reverse;
           var tmpText = [];
 
           if (heLangCodesKeys.indexOf(lang) >= 0) {
@@ -24530,14 +24533,14 @@
                   tmpText = [];
                   for (i = 0; i < text.length; i += 1) {
                       if (Object.prototype.toString.call(text[i]) === '[object Array]') {
-                          tmpText.push([jsPDFAPI.processHebrew(text[i][0], true), text[i][1], text[i][2]]);
+                          tmpText.push([jsPDFAPI.processHebrew(text[i][0], reverse), text[i][1], text[i][2]]);
                       } else {
-                          tmpText.push([jsPDFAPI.processHebrew(text[i], true)]);
+                          tmpText.push([jsPDFAPI.processHebrew(text[i], reverse)]);
                       }
                   }
                   args.text = tmpText;
               } else {
-                  args.text = jsPDFAPI.processHebrew(text, true);
+                  args.text = jsPDFAPI.processHebrew(text, reverse);
               }
           }
       };
